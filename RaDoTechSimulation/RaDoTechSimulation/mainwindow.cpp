@@ -37,10 +37,18 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->VisulizationPageButton, &QPushButton::clicked, this, &MainWindow::showVisualizationPage);
     connect(ui->CreateProfileButton, &QPushButton::clicked, this, &MainWindow::showCreateProfilePage);
     connect(ui->EnterButton, &QPushButton::clicked, this, &MainWindow::showLoginPage);
+    connect(ui->StartScanButton, &QPushButton::clicked, this, &MainWindow::startScan);
+    connect(ui->NextButton, &QPushButton::clicked, this, &MainWindow::nextScanPoint);
+    connect(ui->DeviceScanButton, &QPushButton::clicked, this, &MainWindow::performDeviceScan);
+
 
     //Images
     QPixmap pix("/home/student/Desktop/FinalProject/3004-Final-Project/images/loginImage.png");
     ui->loginImage->setPixmap(pix.scaled(81,71,Qt::KeepAspectRatio));
+    currentScanPoint = 0;
+    totalScanPoints = 5; // For now, assume there are 5 points
+    isDeviceScanned = false;
+
 }
 
 MainWindow::~MainWindow()
@@ -236,3 +244,37 @@ void MainWindow::showRadarChart()
     layout->addWidget(chartView);
     ui->chartContainer->setLayout(layout);
 }
+
+void MainWindow::startScan()
+{
+    currentScanPoint = 1;
+    isDeviceScanned = false;
+    ui->MeasureNowLabel->setText("Scan Point 1: Navigate to Device View and press Scan.");
+    ui->DeviceStatusLabel->setText("Ready for Scan 1.");
+}
+
+
+void MainWindow::nextScanPoint()
+{
+    if (!isDeviceScanned) {
+        ui->MeasureNowLabel->setText("Please perform the scan on the device first.");
+        return;
+    }
+
+    if (currentScanPoint < totalScanPoints) {
+        currentScanPoint++;
+        isDeviceScanned = false;
+        ui->MeasureNowLabel->setText(QString("Scan Point %1: Navigate to Device View and press Scan.").arg(currentScanPoint));
+        ui->DeviceStatusLabel->setText(QString("Ready for Scan %1.").arg(currentScanPoint));
+    } else {
+        ui->MeasureNowLabel->setText("All scan points completed!");
+    }
+}
+
+
+void MainWindow::performDeviceScan()
+{
+    isDeviceScanned = true;
+    ui->DeviceStatusLabel->setText(QString("Scan %1 complete. Return to App View and press Next.").arg(currentScanPoint));
+}
+

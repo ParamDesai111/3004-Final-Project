@@ -1,3 +1,6 @@
+
+
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -33,5 +36,14 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    int currentScanPoint;
+    int totalScanPoints;
+    bool isDeviceScanned;
+
+private slots:
+    void startScan();
+    void nextScanPoint();
+    void performDeviceScan();
+
 };
 #endif // MAINWINDOW_H
