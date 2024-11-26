@@ -102,6 +102,19 @@
        </item>
       </layout>
      </widget>
+     <widget class="QPushButton" name="GoToMeasureViewButton">
+      <property name="geometry">
+       <rect>
+        <x>620</x>
+        <y>50</y>
+        <width>191</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Back To App Measure View</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="AppView">
      <widget class="QPushButton" name="GoToDeviceViewButton">
@@ -414,10 +427,10 @@ p, li { white-space: pre-wrap; }
        <widget class="QWidget" name="verticalLayoutWidget_2">
         <property name="geometry">
          <rect>
-          <x>190</x>
+          <x>40</x>
           <y>160</y>
-          <width>160</width>
-          <height>81</height>
+          <width>481</width>
+          <height>241</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -437,6 +450,13 @@ p, li { white-space: pre-wrap; }
          </item>
          <item>
           <widget class="QLabel" name="MeasureNowLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="ProcessedDataLabel">
            <property name="text">
             <string/>
            </property>

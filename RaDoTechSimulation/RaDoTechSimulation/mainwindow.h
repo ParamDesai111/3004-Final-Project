@@ -1,10 +1,9 @@
-
-
-
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "RaDoTechDevice.h"
+#include "DataProcessor.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -32,6 +31,7 @@ public:
     void showLoginPage();
     void showBarGraph();
     void showRadarChart();
+    void showMeasureView();
 
 
 private:
@@ -39,6 +39,12 @@ private:
     int currentScanPoint;
     int totalScanPoints;
     bool isDeviceScanned;
+
+    RaDoTechDevice device;
+    DataProcessor processor;
+
+    void updateBatteryLevelLabel();
+    void updateProcessedDataUI(const std::map<std::string, float>& processedData);
 
 private slots:
     void startScan();
