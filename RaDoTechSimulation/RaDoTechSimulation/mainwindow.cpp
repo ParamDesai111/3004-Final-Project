@@ -72,8 +72,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->NextButton, &QPushButton::clicked, this, &MainWindow::nextScanPoint);
     connect(ui->DeviceScanButton, &QPushButton::clicked, this, &MainWindow::performDeviceScan);
     connect(ui->GoToMeasureViewButton, &QPushButton::clicked, this, &MainWindow::showMeasureView);
-//    connect(ui->onButton, &QPushButton::clicked, this, &MainWindow::powerDevice);
-//    connect(ui->offButton, &QPushButton::clicked, this, &MainWindow::shutDownDevice);
+    connect(ui->onButton, &QPushButton::clicked, this, &MainWindow::powerDevice);
+    connect(ui->offButton, &QPushButton::clicked, this, &MainWindow::shutDownDevice);
 
     batteryTimer = new QTimer(this);
     batteryTimer->setInterval(15000);
