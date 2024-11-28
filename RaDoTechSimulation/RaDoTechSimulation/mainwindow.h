@@ -7,6 +7,8 @@
 #include "RaDoTechDevice.h"
 #include "DataProcessor.h"
 
+#include <qtimer.h>
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -68,6 +70,8 @@ private:
 
     void updateBatteryLevelLabel();
     void updateProcessedDataUI(const std::map<std::string, float>& processedData);
+
+    QTimer* timer;
 
 };
 #endif // MAINWINDOW_H

@@ -4,11 +4,13 @@
 #include <vector>
 #include <string>
 
+#include "Battery.h"
+
 class RaDoTechDevice
 {
 private:
     bool isPaired;
-    int batteryLevel;
+    Battery battery;
 
 public:
     RaDoTechDevice();

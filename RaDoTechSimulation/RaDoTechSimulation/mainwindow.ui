@@ -115,6 +115,32 @@
        <string>Back to Measure App</string>
       </property>
      </widget>
+     <widget class="QWidget" name="horizontalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>470</y>
+        <width>174</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="onButton">
+         <property name="text">
+          <string>ON</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="offButton_2">
+         <property name="text">
+          <string>OFF</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
     <widget class="QWidget" name="AppView">
      <widget class="QPushButton" name="GoToDeviceViewButton">

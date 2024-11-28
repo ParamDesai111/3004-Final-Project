@@ -1,11 +1,11 @@
 #include "RaDoTechDevice.h"
 #include <cstdlib> // For generating random numbers
 
-RaDoTechDevice::RaDoTechDevice() : isPaired(true), batteryLevel(100) {}
+RaDoTechDevice::RaDoTechDevice() : isPaired(true) {}
 
 bool RaDoTechDevice::startScan()
 {
-    if (batteryLevel <= 0) {
+    if (battery.getBatteryLevel() <= 0) {
         return false; // Cannot start scan due to low battery
     }
     depleteBattery();
@@ -24,10 +24,7 @@ std::vector<float> RaDoTechDevice::collectData()
 
 void RaDoTechDevice::depleteBattery()
 {
-    batteryLevel -= 10; // Decrease battery by 10% per scan
-    if (batteryLevel < 0) {
-        batteryLevel = 0;
-    }
+    battery.deplete();
 }
 
 bool RaDoTechDevice::getIsPaired() const
@@ -37,10 +34,10 @@ bool RaDoTechDevice::getIsPaired() const
 
 int RaDoTechDevice::getBatteryLevel() const
 {
-    return batteryLevel;
+    return battery.getBatteryLevel();
 }
 
 bool RaDoTechDevice::isBatteryLow() const
 {
-    return batteryLevel < 20; // Consider battery low if less than 20%
+    return battery.isLow(); // Consider battery low if less than 20%
 }

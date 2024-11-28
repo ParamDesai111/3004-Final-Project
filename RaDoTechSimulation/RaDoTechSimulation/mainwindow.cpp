@@ -73,7 +73,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->DeviceScanButton, &QPushButton::clicked, this, &MainWindow::performDeviceScan);
     connect(ui->GoToMeasureViewButton, &QPushButton::clicked, this, &MainWindow::showMeasureView);
 
-    updateBatteryLevelLabel();
+    timer = new QTimer(this);
+    timer->setInterval(15000);
+    connect(timer, &QTimer::timeout, this, &MainWindow::updateBatteryLevelLabel);
 
 
 }
@@ -83,6 +85,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// depeletes battery label on ui
+void MainWindow::updateBatteryLevelLabel()
+{
+    this->device.depleteBattery();
+    ui->BatteryPowerProgressBar->setValue(getValue() - 10);
+}
 
 // Switch to App View
 void MainWindow::showAppView()
