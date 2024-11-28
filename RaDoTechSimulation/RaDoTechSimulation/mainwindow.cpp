@@ -72,10 +72,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->NextButton, &QPushButton::clicked, this, &MainWindow::nextScanPoint);
     connect(ui->DeviceScanButton, &QPushButton::clicked, this, &MainWindow::performDeviceScan);
     connect(ui->GoToMeasureViewButton, &QPushButton::clicked, this, &MainWindow::showMeasureView);
+//    connect(ui->onButton, &QPushButton::clicked, this, &MainWindow::powerDevice);
+//    connect(ui->offButton, &QPushButton::clicked, this, &MainWindow::shutDownDevice);
 
-    timer = new QTimer(this);
-    timer->setInterval(15000);
-    connect(timer, &QTimer::timeout, this, &MainWindow::updateBatteryLevelLabel);
+    batteryTimer = new QTimer(this);
+    batteryTimer->setInterval(15000);
+    connect(batteryTimer, &QTimer::timeout, this, &MainWindow::updateBatteryLevelLabel);
 
 
 }
@@ -90,6 +92,16 @@ void MainWindow::updateBatteryLevelLabel()
 {
     this->device.depleteBattery();
     ui->BatteryPowerProgressBar->setValue(getValue() - 10);
+}
+
+void MainWindow::powerDevice()
+{
+    this->batteryTimer->start();
+}
+
+void MainWindow::shutDownDevice()
+{
+    this->batteryTimer->stop();
 }
 
 // Switch to App View

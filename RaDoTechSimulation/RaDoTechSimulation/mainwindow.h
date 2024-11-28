@@ -70,8 +70,10 @@ private:
 
     void updateBatteryLevelLabel();
     void updateProcessedDataUI(const std::map<std::string, float>& processedData);
+    void powerDevice();
+    void shutDownDevice();
 
-    QTimer* timer;
+    QTimer* batteryTimer;
 
 };
 #endif // MAINWINDOW_H
