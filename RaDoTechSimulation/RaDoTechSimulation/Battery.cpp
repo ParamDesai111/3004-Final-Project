@@ -7,7 +7,7 @@ Battery::Battery()
 
 void Battery::deplete()
 {
-    this->batteryLevel -= 10;
+    this->batteryLevel -= 5;
     if (batteryLevel < 0) {
         batteryLevel = 0;
     }

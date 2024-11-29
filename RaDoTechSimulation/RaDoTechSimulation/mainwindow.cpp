@@ -80,6 +80,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(batteryTimer, &QTimer::timeout, this, &MainWindow::updateBatteryLevelLabel);
 
 
+    powerDevice();
+
 }
 
 MainWindow::~MainWindow()
@@ -91,17 +93,35 @@ MainWindow::~MainWindow()
 void MainWindow::updateBatteryLevelLabel()
 {
     this->device.depleteBattery();
-    ui->BatteryPowerProgressBar->setValue(getValue() - 10);
+    ui->BatteryPowerProgressBar->setValue(device.getBatteryLevel());
+
+    if (device.isBatteryLow()) {
+        ui->BatteryPowerProgressBar->setStyleSheet(
+            "QProgressBar::chunk { background-color: red; }"
+            "QProgressBar { border: 1px solid gray; border-radius: 3px; text-align: center; }"
+        );
+    } else {
+        ui->BatteryPowerProgressBar->setStyleSheet(
+            "QProgressBar::chunk { background-color: green; }"
+            "QProgressBar { border: 1px solid gray; border-radius: 3px; text-align: center; }"
+        );
+    }
 }
 
 void MainWindow::powerDevice()
 {
     this->batteryTimer->start();
+    ui->DeviceScanButton->setDisabled(false);
+    ui->onButton->setDisabled(true);
+    ui->offButton->setDisabled(false);
 }
 
 void MainWindow::shutDownDevice()
 {
     this->batteryTimer->stop();
+    ui->DeviceScanButton->setDisabled(true);
+    ui->offButton->setDisabled(true);
+    ui->onButton->setDisabled(false);
 }
 
 // Switch to App View
@@ -638,28 +658,6 @@ void MainWindow::performDeviceScan()
     }
 
     updateBatteryLevelLabel();
-}
-
-
-void MainWindow::updateBatteryLevelLabel()
-{
-    int batteryLevel = device.getBatteryLevel();
-
-    // Update the progress bar value
-    ui->BatteryPowerProgressBar->setValue(batteryLevel);
-
-    // Change the progress bar color based on the battery level
-    if (device.isBatteryLow()) {
-        ui->BatteryPowerProgressBar->setStyleSheet(
-            "QProgressBar::chunk { background-color: red; }"
-            "QProgressBar { border: 1px solid gray; border-radius: 3px; text-align: center; }"
-        );
-    } else {
-        ui->BatteryPowerProgressBar->setStyleSheet(
-            "QProgressBar::chunk { background-color: green; }"
-            "QProgressBar { border: 1px solid gray; border-radius: 3px; text-align: center; }"
-        );
-    }
 }
 
 void MainWindow::updateProcessedDataUI(const std::map<std::string, float>& processedData)
