@@ -73,6 +73,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->NextButton, &QPushButton::clicked, this, &MainWindow::nextScanPoint);
     connect(ui->DeviceScanButton, &QPushButton::clicked, this, &MainWindow::performDeviceScan);
     connect(ui->GoToMeasureViewButton, &QPushButton::clicked, this, &MainWindow::showMeasureView);
+
+    // Power buttons
     connect(ui->onButton, &QPushButton::clicked, this, &MainWindow::powerDevice);
     connect(ui->offButton, &QPushButton::clicked, this, &MainWindow::shutDownDevice);
 
@@ -80,8 +82,16 @@ MainWindow::MainWindow(QWidget *parent)
     batteryTimer->setInterval(15000);
     connect(batteryTimer, &QTimer::timeout, this, &MainWindow::updateBatteryLevelLabel);
 
+    chargedBatteryTimer = new QTimer(this);
+    chargedBatteryTimer->setInterval(15000);
+    connect(chargedBatteryTimer, &QTimer::timeout, this, &MainWindow::UpdateChargedBatteryLevelLabel);
 
+    connect(ui->ChargeButton, &QPushButton::clicked, this, &MainWindow::ChargeBattery);
+
+    ui->ChargeButton->setText("Charging OFF");
     powerDevice();
+
+    connect(ui->PairButton, &QPushButton::clicked, this, &MainWindow::PairUp);
 
 }
 
@@ -90,12 +100,54 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::PairUp() {
+    device.PairUp();
+
+    ui->PairButton->setDisabled(true);
+}
+
+void MainWindow::ChargeBattery() {
+    if(chargedBatteryTimer->isActive()) { //if was Charging
+        chargedBatteryTimer->stop();
+        batteryTimer->start();
+        ui->ChargeButton->setText("Charging OFF");
+    } else { //if was not Charging
+        chargedBatteryTimer->start();
+        batteryTimer->stop();
+        ui->ChargeButton->setText("Charging ON");
+    }
+}
+
+void MainWindow::UpdateChargedBatteryLevelLabel() {
+
+    if(device.getBatteryLevel() == 0)
+        ui->onButton->setDisabled(false);
+
+    this->device.chargeBattery();
+    ui->BatteryPowerProgressBar->setValue(device.getBatteryLevel());
+
+    if(device.isBatteryLow()) {
+        ui->BatteryPowerProgressBar->setStyleSheet(
+            "QProgressBar::chunk { background-color: yellow; }"
+            "QProgressBar { border: 1px solid gray; border-radius: 3px; text-align: center; }"
+        );
+    } else {
+        ui->BatteryPowerProgressBar->setStyleSheet(
+            "QProgressBar::chunk { background-color: green; }"
+            "QProgressBar { border: 1px solid gray; border-radius: 3px; text-align: center; }"
+        );
+    }
+
+
+}
+
 // depeletes battery label on ui
 void MainWindow::updateBatteryLevelLabel()
 {
     this->device.depleteBattery();
     ui->BatteryPowerProgressBar->setValue(device.getBatteryLevel());
 
+    qDebug() << "curr battery level: " << device.getBatteryLevel() << "\n";
     if (device.isBatteryLow() && device.getBatteryLevel() == 20) {
         ui->BatteryPowerProgressBar->setStyleSheet(
             "QProgressBar::chunk { background-color: red; }"
@@ -658,6 +710,15 @@ void MainWindow::nextScanPoint()
 
 void MainWindow::performDeviceScan()
 {
+    if(!device.getIsPaired()) {
+        QMessageBox NoPairMsg;
+        NoPairMsg.setText("Warning: The device is not paired up with the app");
+        NoPairMsg.setBaseSize(200, 200);
+        NoPairMsg.setIcon(QMessageBox::Warning);
+        NoPairMsg.exec();
+        return;
+    }
+
     if (!device.startScan()) {
         ui->DeviceStatusLabel->setText("Low battery. Cannot perform scan.");
         return;
@@ -673,8 +734,6 @@ void MainWindow::performDeviceScan()
     } else {
         ui->DeviceStatusLabel->setText("Scan failed. Please try again.");
     }
-
-    updateBatteryLevelLabel();
 }
 
 void MainWindow::updateProcessedDataUI(const std::map<std::string, float>& processedData)

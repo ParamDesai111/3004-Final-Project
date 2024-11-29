@@ -7,6 +7,7 @@ class Battery
     public:
         Battery();
         void deplete();
+        void charge();
         int getBatteryLevel() const;
         bool isLow() const;
     private:

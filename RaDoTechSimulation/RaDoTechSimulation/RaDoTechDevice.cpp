@@ -1,14 +1,14 @@
 #include "RaDoTechDevice.h"
 #include <cstdlib> // For generating random numbers
 
-RaDoTechDevice::RaDoTechDevice() : isPaired(true) {}
+RaDoTechDevice::RaDoTechDevice() : isPaired(false) {}
 
 bool RaDoTechDevice::startScan()
 {
     if (battery.getBatteryLevel() <= 0) {
         return false; // Cannot start scan due to low battery
     }
-    depleteBattery();
+
     return true;
 }
 
@@ -27,6 +27,11 @@ void RaDoTechDevice::depleteBattery()
     battery.deplete();
 }
 
+void RaDoTechDevice::chargeBattery()
+{
+    battery.charge();
+}
+
 bool RaDoTechDevice::getIsPaired() const
 {
     return isPaired;
@@ -40,4 +45,9 @@ int RaDoTechDevice::getBatteryLevel() const
 bool RaDoTechDevice::isBatteryLow() const
 {
     return battery.isLow(); // Consider battery low if less than 20%
+}
+
+void RaDoTechDevice::PairUp()
+{
+    this->isPaired = true;
 }

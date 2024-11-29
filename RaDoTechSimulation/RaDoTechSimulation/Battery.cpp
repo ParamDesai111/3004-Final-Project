@@ -13,6 +13,14 @@ void Battery::deplete()
     }
 }
 
+void Battery::charge()
+{
+    this->batteryLevel += 5;
+    if (batteryLevel >= 100) {
+        batteryLevel = 100;
+    }
+}
+
 int Battery::getBatteryLevel() const
 {
     return this->batteryLevel;

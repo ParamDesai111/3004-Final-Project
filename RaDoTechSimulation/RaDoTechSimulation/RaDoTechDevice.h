@@ -19,6 +19,7 @@ public:
     bool startScan();
     std::vector<float> collectData();
     void depleteBattery();
+    void chargeBattery();
 
     // Getters
     bool getIsPaired() const;
@@ -26,6 +27,7 @@ public:
 
     // Utility
     bool isBatteryLow() const;
+    void PairUp();
 };
 
 #endif // RADOTECHDEVICE_H

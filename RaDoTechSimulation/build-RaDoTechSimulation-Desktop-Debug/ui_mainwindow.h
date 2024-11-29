@@ -45,10 +45,13 @@ public:
     QPushButton *DeviceScanButton;
     QLabel *DeviceStatusLabel;
     QPushButton *GoToMeasureViewButton;
-    QWidget *horizontalLayoutWidget;
+    QWidget *verticalLayoutWidget_3;
+    QVBoxLayout *verticalLayout_3;
     QHBoxLayout *horizontalLayout;
-    QPushButton *onButton;
     QPushButton *offButton;
+    QPushButton *onButton;
+    QPushButton *ChargeButton;
+    QPushButton *PairButton;
     QWidget *AppView;
     QPushButton *GoToDeviceViewButton;
     QStackedWidget *AppStackedWidget;
@@ -140,12 +143,12 @@ public:
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         ViewsStackedWidget = new QStackedWidget(centralwidget);
         ViewsStackedWidget->setObjectName(QString::fromUtf8("ViewsStackedWidget"));
-        ViewsStackedWidget->setGeometry(QRect(0, 0, 821, 571));
+        ViewsStackedWidget->setGeometry(QRect(0, -20, 821, 571));
         DeviceView = new QWidget();
         DeviceView->setObjectName(QString::fromUtf8("DeviceView"));
         GoToAppViewButton = new QPushButton(DeviceView);
         GoToAppViewButton->setObjectName(QString::fromUtf8("GoToAppViewButton"));
-        GoToAppViewButton->setGeometry(QRect(680, 20, 131, 25));
+        GoToAppViewButton->setGeometry(QRect(670, 20, 141, 25));
         DeviceNameLabel = new QLabel(DeviceView);
         DeviceNameLabel->setObjectName(QString::fromUtf8("DeviceNameLabel"));
         DeviceNameLabel->setGeometry(QRect(10, 20, 151, 17));
@@ -174,22 +177,37 @@ public:
 
         GoToMeasureViewButton = new QPushButton(DeviceView);
         GoToMeasureViewButton->setObjectName(QString::fromUtf8("GoToMeasureViewButton"));
-        GoToMeasureViewButton->setGeometry(QRect(682, 50, 131, 25));
-        horizontalLayoutWidget = new QWidget(DeviceView);
-        horizontalLayoutWidget->setObjectName(QString::fromUtf8("horizontalLayoutWidget"));
-        horizontalLayoutWidget->setGeometry(QRect(340, 470, 174, 80));
-        horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
+        GoToMeasureViewButton->setGeometry(QRect(672, 50, 141, 25));
+        verticalLayoutWidget_3 = new QWidget(DeviceView);
+        verticalLayoutWidget_3->setObjectName(QString::fromUtf8("verticalLayoutWidget_3"));
+        verticalLayoutWidget_3->setGeometry(QRect(350, 430, 256, 121));
+        verticalLayout_3 = new QVBoxLayout(verticalLayoutWidget_3);
+        verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
+        verticalLayout_3->setContentsMargins(0, 0, 0, 0);
+        horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        onButton = new QPushButton(horizontalLayoutWidget);
+        offButton = new QPushButton(verticalLayoutWidget_3);
+        offButton->setObjectName(QString::fromUtf8("offButton"));
+
+        horizontalLayout->addWidget(offButton);
+
+        onButton = new QPushButton(verticalLayoutWidget_3);
         onButton->setObjectName(QString::fromUtf8("onButton"));
 
         horizontalLayout->addWidget(onButton);
 
-        offButton = new QPushButton(horizontalLayoutWidget);
-        offButton->setObjectName(QString::fromUtf8("offButton"));
 
-        horizontalLayout->addWidget(offButton);
+        verticalLayout_3->addLayout(horizontalLayout);
+
+        ChargeButton = new QPushButton(verticalLayoutWidget_3);
+        ChargeButton->setObjectName(QString::fromUtf8("ChargeButton"));
+
+        verticalLayout_3->addWidget(ChargeButton);
+
+        PairButton = new QPushButton(verticalLayoutWidget_3);
+        PairButton->setObjectName(QString::fromUtf8("PairButton"));
+
+        verticalLayout_3->addWidget(PairButton);
 
         ViewsStackedWidget->addWidget(DeviceView);
         AppView = new QWidget();
@@ -480,8 +498,10 @@ public:
         DeviceScanButton->setText(QCoreApplication::translate("MainWindow", "Scan", nullptr));
         DeviceStatusLabel->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
         GoToMeasureViewButton->setText(QCoreApplication::translate("MainWindow", "Back to Measure App", nullptr));
-        onButton->setText(QCoreApplication::translate("MainWindow", "ON", nullptr));
         offButton->setText(QCoreApplication::translate("MainWindow", "OFF", nullptr));
+        onButton->setText(QCoreApplication::translate("MainWindow", "ON", nullptr));
+        ChargeButton->setText(QCoreApplication::translate("MainWindow", "Charge", nullptr));
+        PairButton->setText(QCoreApplication::translate("MainWindow", "Pair to App", nullptr));
         GoToDeviceViewButton->setText(QCoreApplication::translate("MainWindow", "Go to Device View", nullptr));
         CreateHeader->setText(QCoreApplication::translate("MainWindow", "Create Profile", nullptr));
         loginImage->setText(QCoreApplication::translate("MainWindow", "IMAGE", nullptr));

@@ -68,12 +68,16 @@ private:
     RaDoTechDevice device;
     DataProcessor processor;
 
+    QTimer* batteryTimer;
+    QTimer* chargedBatteryTimer;
+
     void updateBatteryLevelLabel();
     void updateProcessedDataUI(const std::map<std::string, float>& processedData);
     void powerDevice();
     void shutDownDevice();
-
-    QTimer* batteryTimer;
+    void UpdateChargedBatteryLevelLabel();
+    void ChargeBattery();
+    void PairUp();
 
 };
 #endif // MAINWINDOW_H
