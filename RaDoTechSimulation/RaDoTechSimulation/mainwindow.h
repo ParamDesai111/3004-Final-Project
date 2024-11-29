@@ -42,6 +42,9 @@ public:
     void updateProfilesList();
     void goToCreateProfilePage();
 
+    void showPersonalInfoPage();
+    void saveResults();
+
 private slots:
     void handleLogin(); // Slot for login button
     void populateHistoryList();  // Populate history on Historical Page

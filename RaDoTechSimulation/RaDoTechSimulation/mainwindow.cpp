@@ -72,6 +72,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->NextButton, &QPushButton::clicked, this, &MainWindow::nextScanPoint);
     connect(ui->DeviceScanButton, &QPushButton::clicked, this, &MainWindow::performDeviceScan);
     connect(ui->GoToMeasureViewButton, &QPushButton::clicked, this, &MainWindow::showMeasureView);
+    connect(ui->SaveButton, &QPushButton::clicked, this, &MainWindow::saveResults);
+
 
     updateBatteryLevelLabel();
 
@@ -566,13 +568,68 @@ void MainWindow::showMeasureView(){
     showMeasureNowPage();
 }
 
+#include <QInputDialog>
+
 void MainWindow::startScan()
 {
+    // Ensure the current user is set
+    if (!currentUser) {
+        ui->MeasureNowLabel->setText("No user is logged in.");
+        return;
+    }
+
+    // Get the list of profiles
+    QList<Profile*> profiles = currentUser->getProfiles();
+    if (profiles.isEmpty()) {
+        ui->MeasureNowLabel->setText("No profiles found for the current user.");
+        return;
+    }
+
+    // Create a list of profile names for display
+    QStringList profileNames;
+    for (Profile* profile : profiles) {
+        // Assuming Profile has a method getName() to get the profile name
+        profileNames.append(profile->getName());
+    }
+
+    // Show a dialog to select a profile
+    bool ok;
+    QString selectedProfileName = QInputDialog::getItem(
+        this,
+        "Select Profile",
+        "Choose a profile for the scan:",
+        profileNames,
+        0,  // Default index
+        false, // Editable: false (user can't edit the list)
+        &ok
+    );
+
+    if (!ok) {
+        ui->MeasureNowLabel->setText("Scan canceled.");
+        return;
+    }
+
+    // Find the selected profile
+    Profile* selectedProfile = nullptr;
+    for (Profile* profile : profiles) {
+        if (profile->getName() == selectedProfileName) {
+            selectedProfile = profile;
+            break;
+        }
+    }
+
+    if (!selectedProfile) {
+        ui->MeasureNowLabel->setText("Selected profile not found.");
+        return;
+    }
+
+    // Proceed with scan for the selected profile
     currentScanPoint = 1;
     isDeviceScanned = false;
-    ui->MeasureNowLabel->setText("Scan Point 1: Navigate to Device View and press Scan.");
+    ui->MeasureNowLabel->setText(QString("Starting scan for profile: %1").arg(selectedProfileName));
     ui->DeviceStatusLabel->setText("Ready for Scan 1.");
 }
+
 
 
 void MainWindow::nextScanPoint()
@@ -593,7 +650,8 @@ void MainWindow::nextScanPoint()
         ui->DeviceStatusLabel->setText(QString("Ready for Scan %1.").arg(currentScanPoint));
     } else {
         ui->MeasureNowLabel->setText("All scan points completed!");
-        updateProcessedDataUI(processedData);
+        //updateProcessedDataUI(processedData);
+        showPersonalInfoPage();
     }
 }
 
@@ -651,4 +709,11 @@ void MainWindow::updateProcessedDataUI(const std::map<std::string, float>& proce
     ui->ProcessedDataLabel->setText(dataText);
 }
 
+void MainWindow::showPersonalInfoPage(){
+ui->AppStackedWidget->setCurrentWidget(ui->PersonalMetricsPage);
+}
+
+void MainWindow::saveResults(){
+    ui->AppStackedWidget->setCurrentWidget(ui->HomePage);
+}
 
