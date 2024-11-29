@@ -16,6 +16,7 @@
 #include <QChartView>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -95,7 +96,18 @@ void MainWindow::updateBatteryLevelLabel()
     this->device.depleteBattery();
     ui->BatteryPowerProgressBar->setValue(device.getBatteryLevel());
 
-    if (device.isBatteryLow()) {
+    if (device.isBatteryLow() && device.getBatteryLevel() == 20) {
+        ui->BatteryPowerProgressBar->setStyleSheet(
+            "QProgressBar::chunk { background-color: red; }"
+            "QProgressBar { border: 1px solid gray; border-radius: 3px; text-align: center; }"
+        );
+        QMessageBox LowBatteryMsg;
+        LowBatteryMsg.setText("Warning: Low Battery");
+        LowBatteryMsg.setIcon(QMessageBox::Warning);
+        LowBatteryMsg.setBaseSize(200, 200);
+        LowBatteryMsg.exec();
+
+    } else if(device.isBatteryLow()) {
         ui->BatteryPowerProgressBar->setStyleSheet(
             "QProgressBar::chunk { background-color: red; }"
             "QProgressBar { border: 1px solid gray; border-radius: 3px; text-align: center; }"
@@ -105,6 +117,11 @@ void MainWindow::updateBatteryLevelLabel()
             "QProgressBar::chunk { background-color: green; }"
             "QProgressBar { border: 1px solid gray; border-radius: 3px; text-align: center; }"
         );
+    }
+
+    if(device.getBatteryLevel() == 0) {
+        ui->onButton->setDisabled(true);
+        ui->offButton->setDisabled(true);
     }
 }
 
@@ -119,7 +136,7 @@ void MainWindow::powerDevice()
 void MainWindow::shutDownDevice()
 {
     this->batteryTimer->stop();
-    ui->DeviceScanButton->setDisabled(true);
+//    ui->DeviceScanButton->setDisabled(true);
     ui->offButton->setDisabled(true);
     ui->onButton->setDisabled(false);
 }

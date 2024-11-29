@@ -140,7 +140,7 @@ public:
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         ViewsStackedWidget = new QStackedWidget(centralwidget);
         ViewsStackedWidget->setObjectName(QString::fromUtf8("ViewsStackedWidget"));
-        ViewsStackedWidget->setGeometry(QRect(0, 0, 811, 571));
+        ViewsStackedWidget->setGeometry(QRect(0, 0, 821, 571));
         DeviceView = new QWidget();
         DeviceView->setObjectName(QString::fromUtf8("DeviceView"));
         GoToAppViewButton = new QPushButton(DeviceView);
