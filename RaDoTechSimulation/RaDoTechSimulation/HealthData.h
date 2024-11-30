@@ -12,17 +12,32 @@ struct MeridianResult {
     QString status;
 };
 
+struct Comments
+{
+    double bodyTemperature;
+    QString bloodPressure;
+    int heartRate;
+    int sleepingTime;
+    double currentWeight;
+    QString emotionalState;
+    QString overallFeeling;
+    QString notes;
+};
+
+
 class HealthData {
 private:
     QDate date;                  // Date of the measurement
     QList<MeridianResult> data;  // List of results for the measurement
+    QList<Comments> comments;
 
 public:
-    HealthData(const QDate& date, const QList<MeridianResult>& data)
-        : date(date), data(data) {}
+    HealthData(const QDate& date, const QList<MeridianResult>& data, const QList<Comments>& comments)
+        : date(date), data(data), comments(comments) {}
 
     QDate getDate() const { return date; }
     QList<MeridianResult> getData() const { return data; }
+    QList<Comments> getComments() const {return comments;}
 
     // Algorithms Functions
     // Functional Health Indicators
