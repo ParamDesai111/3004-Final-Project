@@ -7,8 +7,6 @@
 #include "RaDoTechDevice.h"
 #include "DataProcessor.h"
 
-#include <qtimer.h>
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -44,11 +42,15 @@ public:
     void updateProfilesList();
     void goToCreateProfilePage();
 
+
+    void showPersonalInfoPage();
+    void saveResults();
+
 private slots:
     void handleLogin(); // Slot for login button
     void populateHistoryList();  // Populate history on Historical Page
     void viewDetails();
-
+    void populateIndicators(HealthData* selectedData);
     void startScan();
     void nextScanPoint();
     void performDeviceScan();
@@ -59,25 +61,33 @@ private:
     User* currentUser;
     void createPresetUsers(); // Initialize preset users
 
+//    void setProcessedData(std::map<std::string, float>* processedDataResults);
+//    std::map<std::string, float> getProcessedData() { return processedData;}
 
     // Device and Measure
     int currentScanPoint;
     int totalScanPoints;
     bool isDeviceScanned;
+    Profile* currProfile;
 
     RaDoTechDevice device;
     DataProcessor processor;
+    std::map<std::string, float> processedData;
+    QString getClassification(double value, double min, double max);
+
+    void updateProcessedDataUI(const std::map<std::string, float>& processedData);
+    QList<MeridianResult> convertProcessedDataToMeridianResults(const std::map<std::string, float>& processedData);
 
     QTimer* batteryTimer;
     QTimer* chargedBatteryTimer;
 
     void updateBatteryLevelLabel();
-    void updateProcessedDataUI(const std::map<std::string, float>& processedData);
     void powerDevice();
     void shutDownDevice();
     void UpdateChargedBatteryLevelLabel();
     void ChargeBattery();
     void PairUp();
+
 
 };
 #endif // MAINWINDOW_H
