@@ -13,6 +13,7 @@ private:
     double height;
     QDate dateOfBirth;
     QList<HealthData*> history;  // Historical health data
+    Profile* selectedProfile;
 
 public:
     Profile(const QString& name, const QString& gender, double weight, double height, const QDate& dob)
@@ -27,6 +28,9 @@ public:
     QList<HealthData*> getHistory() const { return history; }
 
     void addHealthData(HealthData* data) { history.append(data); }
+    void setSelectedProfile(Profile* profile) {selectedProfile = profile; }
+    Profile* getSelectedProfile() {return selectedProfile;}
+
 };
 
 #endif // PROFILE_H
