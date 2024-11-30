@@ -6,6 +6,7 @@
 
 #include "Battery.h"
 
+
 class RaDoTechDevice
 {
 private:
@@ -28,6 +29,7 @@ public:
     // Utility
     bool isBatteryLow() const;
     void PairUp();
+
 };
 
 #endif // RADOTECHDEVICE_H
