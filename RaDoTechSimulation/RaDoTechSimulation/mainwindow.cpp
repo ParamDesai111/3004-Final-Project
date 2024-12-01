@@ -175,7 +175,7 @@ void MainWindow::showProfilePage()
 void MainWindow::showVisualizationPage()
 {
     ui->AppStackedWidget->setCurrentWidget(ui->VisulizationPage);
-    showBarGraph();
+//    showBarGraph();
 //    showRadarChart();updateBatteryLevelLabel();
 }
 
@@ -485,6 +485,7 @@ void MainWindow::viewDetails() {
     // Display the results on the Detailed Results Page
 //    ui->DetailedResultsLabel->setText(detailsText);
     populateIndicators(selectedData);
+    showBarGraph(selectedData);
     ui->AppStackedWidget->setCurrentWidget(ui->DetailedResultsPage);
 
 
@@ -502,6 +503,8 @@ void MainWindow::viewDetails() {
                 .arg(comment.notes);
     }
     ui->CommentsLabel->setText(detailsComments);
+
+
 }
 
 // Function to populate health indicators in the DetailedResultsPage
@@ -564,61 +567,79 @@ QString MainWindow::getClassification(double value, double min, double max) {
 
 
 
-// Just to show Bar Graph
-void MainWindow::showBarGraph()
+void MainWindow::showBarGraph(HealthData* healthdata)
 {
-    // Create a new bar set and populate it with data
-    QBarSet *set0 = new QBarSet("Organ 1");
-    QBarSet *set1 = new QBarSet("Organ 2");
-    QBarSet *set2 = new QBarSet("Organ 3");
+    // Get results and validate data
+    QList<MeridianResult> results = healthdata->getData();
+    if (results.size() < 24) {
+        qDebug() << "Insufficient data for the bar graph. Expected 24, got:" << results.size();
+        return;
+    }
 
-    // Sample data values
-    *set0 << 70 << 85 << 60;
-    *set1 << 55 << 90 << 40;
-    *set2 << 65 << 75 << 50;
+    // Create bar sets for "Left" and "Right"
+    QBarSet* leftSet = new QBarSet("Left");
+    QBarSet* rightSet = new QBarSet("Right");
+
+    // Map data into bar sets
+    for (int i = 0; i < results.size(); i += 2) {
+        leftSet->append(results[i].conductance);     // Even indices are "Left"
+        rightSet->append(results[i + 1].conductance); // Odd indices are "Right"
+    }
 
     // Create a bar series and add the sets
-    QBarSeries *series = new QBarSeries();
-    series->append(set0);
-    series->append(set1);
-    series->append(set2);
+    QBarSeries* series = new QBarSeries();
+    series->append(leftSet);
+    series->append(rightSet);
 
-    // Create a chart and add the series
-    QChart *chart = new QChart();
-    chart->addSeries(series);
-    chart->setTitle("Organ Health Metrics");
-    chart->setAnimationOptions(QChart::SeriesAnimations);
-
-    // Define categories (x-axis labels)
+    // Create categories (meridian names)
     QStringList categories;
-    categories << "Scan 1" << "Scan 2" << "Scan 3";
+    categories << "Lungs" << "Pericardium" << "Heart" << "Small Intestine"
+               << "Lymph" << "Large Intestine" << "Spleen" << "Liver"
+               << "Kidney" << "Bladder" << "Gallbladder" << "Stomach";
 
     // Create category axis (x-axis)
-    QBarCategoryAxis *axisX = new QBarCategoryAxis();
+    QBarCategoryAxis* axisX = new QBarCategoryAxis();
     axisX->append(categories);
-    chart->addAxis(axisX, Qt::AlignBottom);
-    series->attachAxis(axisX);
+    axisX->setLabelsAngle(90); // Rotate labels for readability
 
     // Create value axis (y-axis)
-    QValueAxis *axisY = new QValueAxis();
-    axisY->setRange(0, 100); // Set the range for y-axis
-    axisY->setTitleText("Health Metric (%)");
+    QValueAxis* axisY = new QValueAxis();
+    axisY->setRange(0, 200); // Adjust based on your data range
+    axisY->setTitleText("Conductance (µA)");
+
+    // Create a chart
+    QChart* chart = new QChart();
+    chart->addSeries(series);
+    chart->addAxis(axisX, Qt::AlignBottom);
     chart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisX);
     series->attachAxis(axisY);
 
-    // Remove legend for simplicity
+    chart->setTitle("Organ Health Metrics");
+    chart->setAnimationOptions(QChart::SeriesAnimations);
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignBottom);
 
-    // Create a QChartView and set it as the central widget
-    QChartView *chartView = new QChartView(chart);
+    // Create a QChartView and display the chart
+    QChartView* chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
 
-    // Add the chart to the placeholder widget (chartContainer)
-    QVBoxLayout *layout = new QVBoxLayout(ui->chartContainer);
+    // Clear and set the layout for the chart container
+    QLayout* existingLayout = ui->ChartWidget->layout();
+    if (existingLayout != nullptr) {
+        QLayoutItem* item;
+        while ((item = existingLayout->takeAt(0)) != nullptr) {
+            delete item->widget();
+            delete item;
+        }
+        delete existingLayout;
+    }
+
+    QVBoxLayout* layout = new QVBoxLayout(ui->ChartWidget);
     layout->addWidget(chartView);
-    ui->chartContainer->setLayout(layout);
+    ui->ChartWidget->setLayout(layout);
 }
+
 
 void MainWindow::showRadarChart()
 {

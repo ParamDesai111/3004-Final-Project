@@ -681,12 +681,12 @@ p, li { white-space: pre-wrap; }
          <rect>
           <x>10</x>
           <y>30</y>
-          <width>511</width>
+          <width>681</width>
           <height>521</height>
          </rect>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="Indicators">
          <attribute name="title">
@@ -1275,6 +1275,16 @@ p, li { white-space: pre-wrap; }
          <attribute name="title">
           <string>Tab 2</string>
          </attribute>
+         <widget class="QWidget" name="ChartWidget" native="true">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>531</width>
+            <height>491</height>
+           </rect>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="Comments">
          <attribute name="title">

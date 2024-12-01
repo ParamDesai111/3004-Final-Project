@@ -34,7 +34,7 @@ public:
     void showVisualizationPage();
     void showCreateProfilePage();
     void showLoginPage();
-    void showBarGraph();
+    void showBarGraph(HealthData* healthdata);
     void showRadarChart();
 
     void saveProfile(); // Save a new profile for the user
