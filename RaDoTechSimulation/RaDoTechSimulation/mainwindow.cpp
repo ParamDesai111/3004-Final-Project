@@ -486,6 +486,7 @@ void MainWindow::viewDetails() {
 //    ui->DetailedResultsLabel->setText(detailsText);
     populateIndicators(selectedData);
     showBarGraph(selectedData);
+    showRadarChart(selectedData);
     ui->AppStackedWidget->setCurrentWidget(ui->DetailedResultsPage);
 
 
@@ -641,26 +642,48 @@ void MainWindow::showBarGraph(HealthData* healthdata)
 }
 
 
-void MainWindow::showRadarChart()
+void MainWindow::showRadarChart(HealthData* healthdata)
 {
     // Create a polar chart
     QtCharts::QPolarChart *polarChart = new QtCharts::QPolarChart();
     polarChart->setTitle("Organ Health Radar Chart");
 
-    // Sample Data for the Radar Chart
-    QVector<double> leftSideData = {85, 70, 90, 95, 80};
-    QVector<double> rightSideData = {75, 85, 70, 90, 88};
-    QVector<double> averageValues = {80, 78, 80, 92, 84};
+    // Get the data
+    QList<MeridianResult> results = healthdata->getData();
 
-    // Labels for the axes
-    QStringList categories = {"Heart", "Liver", "Lungs", "Kidneys", "Stomach"};
+    if (results.size() < 24) {
+        qDebug() << "Insufficient data for radar chart. Expected at least 24 results, got:" << results.size();
+        return;
+    }
+
+    // Vectors to hold computed values
+    QVector<double> leftSideData;
+    QVector<double> rightSideData;
+    QVector<double> averageValues;
+
+    // Process the data for left and right sides
+    for (int i = 0; i < results.size(); i += 2) { // Step by 2: 0=Left, 1=Right
+        double leftValue = results[i].conductance;     // Left value
+        double rightValue = results[i + 1].conductance; // Right value
+        double averageValue = (leftValue + rightValue) / 2.0; // Average
+
+        leftSideData.append(leftValue);
+        rightSideData.append(rightValue);
+        averageValues.append(averageValue);
+    }
+
+    // Labels for the axes (corresponding to organ names)
+    QStringList categories;
+    categories << "Lungs" << "Pericardium" << "Heart" << "Small Intestine"
+               << "Lymph" << "Large Intestine" << "Spleen" << "Liver"
+               << "Kidney" << "Bladder" << "Gallbladder" << "Stomach";
 
     // Create a Value Axis (for the circular range)
     QtCharts::QValueAxis *valueAxis = new QtCharts::QValueAxis();
-    valueAxis->setRange(0, 100); // Scale from 0 to 100
+    valueAxis->setRange(0, 200); // Adjust range based on conductance values
     valueAxis->setTickCount(6);  // Add tick marks
     valueAxis->setLabelFormat("%.0f");
-    valueAxis->setTitleText("Health Metric (%)");
+    valueAxis->setTitleText("Conductance");
     polarChart->addAxis(valueAxis, QtCharts::QPolarChart::PolarOrientationRadial);
 
     // Create a Category Axis (for the angular labels)
@@ -670,7 +693,7 @@ void MainWindow::showRadarChart()
     {
         angularAxis->append(categories[i], i);
     }
-    angularAxis->setRange(0, categories.size());
+    angularAxis->setRange(0, categories.size() - 1); // Adjust for zero-based indexing
     polarChart->addAxis(angularAxis, QtCharts::QPolarChart::PolarOrientationAngular);
 
     // Create Line Series for each data set
@@ -708,10 +731,51 @@ void MainWindow::showRadarChart()
     QtCharts::QChartView *chartView = new QtCharts::QChartView(polarChart);
     chartView->setRenderHint(QPainter::Antialiasing);
 
-    // Add the chart to the placeholder widget (chartContainer)
-    QVBoxLayout *layout = new QVBoxLayout(ui->chartContainer);
+    // Clear any existing layout in CircleChartWidget
+    QLayout *existingLayout = ui->CircleChartWidget->layout();
+    if (existingLayout != nullptr)
+    {
+        QLayoutItem *item;
+        while ((item = existingLayout->takeAt(0)) != nullptr)
+        {
+            delete item->widget(); // Remove widgets
+            delete item;           // Remove layout items
+        }
+        delete existingLayout; // Delete the existing layout
+    }
+
+    // Add the chart to the placeholder widget (CircleChartWidget)
+    QVBoxLayout *layout = new QVBoxLayout(ui->CircleChartWidget);
     layout->addWidget(chartView);
-    ui->chartContainer->setLayout(layout);
+    ui->CircleChartWidget->setLayout(layout);
+}
+
+void MainWindow::updateBodyChart(HealthData* healthdata)
+{
+    QList<MeridianResult> results = healthdata->getData();
+
+    for (const MeridianResult& result : results)
+    {
+        QString organ = result.meridian.toLower();
+        QString status;
+
+        if (result.status == "Above") {
+            status = "above";
+        } else if (result.status == "Normal") {
+            status = "normal";
+        } else {
+            status = "below";
+        }
+
+        // Construct the image path dynamically
+        QString imagePath = QString(":/images/%1_%2.png").arg(organ).arg(status);
+
+        // Set the appropriate image for the QLabel
+        QLabel* organLabel = findChild<QLabel*>(organ + "Label");
+        if (organLabel) {
+            organLabel->setPixmap(QPixmap(imagePath).scaled(organLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        }
+    }
 }
 
 

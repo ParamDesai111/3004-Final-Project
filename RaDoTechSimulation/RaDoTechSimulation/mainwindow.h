@@ -35,7 +35,8 @@ public:
     void showCreateProfilePage();
     void showLoginPage();
     void showBarGraph(HealthData* healthdata);
-    void showRadarChart();
+    void showRadarChart(HealthData* healthdata);
+    void updateBodyChart(HealthData* healthdata);
 
     void saveProfile(); // Save a new profile for the user
     void showProfiles(); // Display all profiles for the user
