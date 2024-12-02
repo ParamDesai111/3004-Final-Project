@@ -487,6 +487,7 @@ void MainWindow::viewDetails() {
     populateIndicators(selectedData);
     showBarGraph(selectedData);
     showRadarChart(selectedData);
+    updateBodyChart(selectedData);
     ui->AppStackedWidget->setCurrentWidget(ui->DetailedResultsPage);
 
 
@@ -752,33 +753,168 @@ void MainWindow::showRadarChart(HealthData* healthdata)
 
 void MainWindow::updateBodyChart(HealthData* healthdata)
 {
-    QList<MeridianResult> results = healthdata->getData();
-
-    for (const MeridianResult& result : results)
-    {
-        QString organ = result.meridian.toLower();
-        QString status;
-
-        if (result.status == "Above") {
-            status = "above";
-        } else if (result.status == "Normal") {
-            status = "normal";
-        } else {
-            status = "below";
+    // Clear any existing layout in BodyChartWidget
+    QLayout* existingLayout = ui->BodyChartWidget->layout();
+    if (existingLayout) {
+        QLayoutItem* item;
+        while ((item = existingLayout->takeAt(0)) != nullptr) {
+            delete item->widget(); // Remove child widgets
+            delete item;           // Remove layout items
         }
-
-        // Construct the image path dynamically
-        QString imagePath = QString(":/images/%1_%2.png").arg(organ).arg(status);
-
-        // Set the appropriate image for the QLabel
-        QLabel* organLabel = findChild<QLabel*>(organ + "Label");
-        if (organLabel) {
-            organLabel->setPixmap(QPixmap(imagePath).scaled(organLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        }
+        delete existingLayout; // Remove the layout itself
     }
+
+    for(int i=0;i<healthdata->getData().size(); ++i){
+        qDebug() << healthdata->getData()[i].meridian;
+    }
+
+    // Add LeftLung.png with its label
+    //QLabel* leftLungLabel = new QLabel(ui->BodyChartWidget);
+    QPixmap leftLungPixmap("/home/student/Desktop/LeftLung.png");
+
+    if (leftLungPixmap.isNull()) {
+        qDebug() << "Failed to load LeftLung.png";
+        ui->leftLungLabel->setText("Error: Failed to load LeftLung.png");
+        ui->leftLungLabel->setAlignment(Qt::AlignCenter);
+    } else {
+        ui->leftLungLabel->setPixmap(leftLungPixmap.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ui->leftLungLabel->setAlignment(Qt::AlignCenter);
+    }
+
+    ui->leftLungStatus->setText("(L)"+healthdata->getData()[0].status);
+
+    QPixmap rightLungPixmap("/home/student/Desktop/RightLung.png");
+
+    if (rightLungPixmap.isNull()) {
+        qDebug() << "Failed to load RightLung.png";
+        ui->rightLungLabel->setText("Error: Failed to load RightLung.png");
+        ui->rightLungLabel->setAlignment(Qt::AlignCenter);
+    } else {
+        ui->rightLungLabel->setPixmap(rightLungPixmap.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ui->rightLungLabel->setAlignment(Qt::AlignCenter);
+    }
+
+    ui->rightLungStatus->setText("(R) "+healthdata->getData()[1].status);
+
+    QPixmap veinsPixmap("/home/student/Desktop/veins.png");
+
+    if (veinsPixmap.isNull()) {
+        qDebug() << "Failed to load heartLabel.png";
+        ui->veinsLabel->setText("Error: Failed to load heartLabel.png");
+        ui->veinsLabel->setAlignment(Qt::AlignCenter);
+    } else {
+        ui->veinsLabel->setPixmap(veinsPixmap.scaled(50, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ui->veinsLabel->setAlignment(Qt::AlignCenter);
+    }
+
+    ui->leftVeinsStatus->setText("(L) "+healthdata->getData()[2].status);
+    ui->rightVeinsStatus->setText("(R) "+healthdata->getData()[3].status);
+
+    QPixmap heartPixmap("/home/student/Desktop/heart.png");
+
+    if (heartPixmap.isNull()) {
+        qDebug() << "Failed to load heartLabel.png";
+        ui->heartLabel->setText("Error: Failed to load heartLabel.png");
+        ui->heartLabel->setAlignment(Qt::AlignCenter);
+    } else {
+        ui->heartLabel->setPixmap(heartPixmap.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ui->heartLabel->setAlignment(Qt::AlignCenter);
+    }
+
+    ui->leftHeartStatus->setText("(L) "+healthdata->getData()[4].status);
+    ui->rightHeartStatus->setText("(R) "+healthdata->getData()[5].status);
+
+
+    ui->leftSmallIntestineStatus->setText("(L) "+healthdata->getData()[6].status);
+    ui->rightSmallIntestineStatus->setText("(R) "+healthdata->getData()[7].status);
+
+    QPixmap intestinePixmap("/home/student/Desktop/intestines.png");
+
+    if (intestinePixmap.isNull()) {
+        qDebug() << "Failed to load heartLabel.png";
+        ui->intestineLabel->setText("Error: Failed to load heartLabel.png");
+        ui->intestineLabel->setAlignment(Qt::AlignCenter);
+    } else {
+        ui->intestineLabel->setPixmap(intestinePixmap.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ui->intestineLabel->setAlignment(Qt::AlignCenter);
+    }
+
+    ui->leftLargeIntestineStatus->setText("(L) "+healthdata->getData()[10].status);
+    ui->rightLargeIntestineStatus->setText("(R) "+healthdata->getData()[11].status);
+
+    QPixmap liverPixmap("/home/student/Desktop/liver.png");
+
+    if (liverPixmap.isNull()) {
+        qDebug() << "Failed to load heartLabel.png";
+        ui->liverLabel->setText("Error: Failed to load heartLabel.png");
+        ui->liverLabel->setAlignment(Qt::AlignCenter);
+    } else {
+        ui->liverLabel->setPixmap(liverPixmap.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ui->liverLabel->setAlignment(Qt::AlignCenter);
+    }
+
+    ui->leftLiverStatus->setText("(L) "+healthdata->getData()[14].status);
+    ui->rightLiverStatus->setText("(R) "+healthdata->getData()[15].status);
+
+    QPixmap kidneyPixmap("/home/student/Desktop/kidneys.png");
+
+    if (kidneyPixmap.isNull()) {
+        qDebug() << "Failed to load heartLabel.png";
+        ui->kidneyLabel->setText("Error: Failed to load heartLabel.png");
+        ui->kidneyLabel->setAlignment(Qt::AlignCenter);
+    } else {
+        ui->kidneyLabel->setPixmap(kidneyPixmap.scaled(50, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ui->kidneyLabel->setAlignment(Qt::AlignCenter);
+    }
+
+    ui->leftKidneyStatus->setText("(L) "+healthdata->getData()[16].status);
+    ui->rightKidneyStatus->setText("(R) "+healthdata->getData()[17].status);
+
+    QPixmap bladderPixmap("/home/student/Desktop/bladder.png");
+
+    if (bladderPixmap.isNull()) {
+        qDebug() << "Failed to load heartLabel.png";
+        ui->bladderLabel->setText("Error: Failed to load heartLabel.png");
+        ui->bladderLabel->setAlignment(Qt::AlignCenter);
+    } else {
+        ui->bladderLabel->setPixmap(bladderPixmap.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ui->bladderLabel->setAlignment(Qt::AlignCenter);
+    }
+
+    ui->leftBladderStatus->setText("(L) "+healthdata->getData()[18].status);
+    ui->rightBladderStatus->setText("(R) "+healthdata->getData()[19].status);
+
+    QPixmap gallbladderPixmap("/home/student/Desktop/gallbladder.png");
+
+    if (gallbladderPixmap.isNull()) {
+        qDebug() << "Failed to load heartLabel.png";
+        ui->gallbladderLabel->setText("Error: Failed to load heartLabel.png");
+        ui->gallbladderLabel->setAlignment(Qt::AlignCenter);
+    } else {
+        ui->gallbladderLabel->setPixmap(gallbladderPixmap.scaled(25, 25, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ui->gallbladderLabel->setAlignment(Qt::AlignCenter);
+    }
+
+    ui->leftGallbladderStatus->setText("(L) "+healthdata->getData()[20].status);
+    ui->rightGallbladderStatus->setText("(R) "+healthdata->getData()[21].status);
+
+    QPixmap stomachPixmap("/home/student/Desktop/stomach.png");
+
+    if (stomachPixmap.isNull()) {
+        qDebug() << "Failed to load heartLabel.png";
+        ui->stomachLabel->setText("Error: Failed to load heartLabel.png");
+        ui->stomachLabel->setAlignment(Qt::AlignCenter);
+    } else {
+        ui->stomachLabel->setPixmap(stomachPixmap.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ui->stomachLabel->setAlignment(Qt::AlignCenter);
+    }
+
+    ui->leftStomachStatus->setText("(L) "+healthdata->getData()[22].status);
+    ui->rightStomachStatus->setText("(R) "+healthdata->getData()[23].status);
+
+
+    qDebug() << "Body chart with lungs updated successfully.";
 }
-
-
 
 
 
