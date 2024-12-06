@@ -102,7 +102,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(chargedBatteryTimer, &QTimer::timeout, this, &MainWindow::UpdateChargedBatteryLevelLabel);
 
     connect(ui->ChargeButton, &QPushButton::clicked, this, &MainWindow::ChargeBattery);
-    ui->ChargeButton->setText("Charging OFF");
+    ui->ChargeButton->setText("Charging ON");
     powerDevice();
     connect(ui->PairButton, &QPushButton::clicked, this, &MainWindow::PairUp);
 
@@ -973,11 +973,11 @@ void MainWindow::ChargeBattery() {
     if(chargedBatteryTimer->isActive()) {
         chargedBatteryTimer->stop();
         batteryTimer->start();
-        ui->ChargeButton->setText("Charging OFF");
+        ui->ChargeButton->setText("Charging ON");
     } else {
         chargedBatteryTimer->start();
         batteryTimer->stop();
-        ui->ChargeButton->setText("Charging ON");
+        ui->ChargeButton->setText("Charging OFF");
     }
 }
 
